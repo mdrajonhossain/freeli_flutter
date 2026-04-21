@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         Navigator.pushNamed(
                           context,
-                          "/otp",
+                          "/company",
                           arguments: {
                             "email": emailController.text,
                             "password": passwordController.text,

@@ -16,14 +16,14 @@ class CompanyListScreen extends StatelessWidget {
     "Amazon",
     "Microsoft",
     "Amazon",
-    "Amazon",
-    "Amazon",
-    "Microsoft",
-    "Amazon",
-    "Amazon",
-    "Amazon",
-    "Microsoft",
-    "Amazon",
+    "Apple",
+    "Netflix",
+    "Tesla",
+    "Meta",
+    "Uber",
+    "Spotify",
+    "Adobe",
+    "IBM",
   ];
 
   @override
@@ -40,10 +40,12 @@ class CompanyListScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
+
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 10),
+
             const Text(
               "Welcome back!",
               style: TextStyle(
@@ -52,29 +54,34 @@ class CompanyListScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+
             const SizedBox(height: 8),
+
             const Text(
               "Please select a business account to continue",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
+
             const SizedBox(height: 20),
+
+            /// ================= LIST =================
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 itemCount: companies.length,
                 itemBuilder: (context, index) {
                   return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
+                    margin: const EdgeInsets.only(bottom: 10),
                     color: Colors.white.withOpacity(0.08),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: ListTile(
-                      visualDensity: VisualDensity.compact,
+                      dense: true,
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
+                        horizontal: 12,
+                        vertical: 6,
                       ),
                       title: Text(
                         companies[index],
@@ -89,20 +96,29 @@ class CompanyListScreen extends StatelessWidget {
                         color: Colors.white54,
                         size: 14,
                       ),
+
+                      /// ✅ FIXED ON TAP
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Selected ${companies[index]}"),
+                            duration: const Duration(milliseconds: 800),
                           ),
                         );
+
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          Navigator.pushNamed(context, "/otp");
+                        });
                       },
                     ),
                   );
                 },
               ),
             ),
+
+            /// ================= THEME SWITCH =================
             Padding(
-              padding: const EdgeInsets.only(bottom: 30, top: 10),
+              padding: const EdgeInsets.only(bottom: 25, top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -120,7 +136,6 @@ class CompanyListScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),

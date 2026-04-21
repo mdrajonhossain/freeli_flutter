@@ -27,7 +27,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   void verifyOtp() {
     if (getOtp().length == 6) {
-      Navigator.pushReplacementNamed(context, "/company");
+      Navigator.pushReplacementNamed(context, "/home");
     } else {
       ScaffoldMessenger.of(
         context,

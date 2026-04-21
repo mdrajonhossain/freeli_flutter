@@ -3,6 +3,7 @@ import 'CompanyListScreen.dart';
 import 'LoginScreen.dart';
 import 'OtpScreen.dart';
 import 'SolveScreen.dart';
+import 'HomePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,8 +37,7 @@ class _MyAppState extends State<MyApp> {
             OtpScreen(isDark: isDark, onThemeChange: toggleTheme),
         "/company": (context) =>
             CompanyListScreen(isDark: isDark, onThemeChange: toggleTheme),
-        "/solve": (context) =>
-            SolveScreen(isDark: isDark, onThemeChange: toggleTheme),
+        "/home": (context) => HomePage(),
       },
     );
   }
