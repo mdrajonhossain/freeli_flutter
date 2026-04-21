@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static Color getBackgroundColor(bool isDark) {
-    return isDark ? const Color(0xFF030915) : const Color(0xFF052874);
+    return isDark ? const Color(0xFF052874) : const Color(0xFF030915);
   }
 
   static const LinearGradient primaryGradient = LinearGradient(
