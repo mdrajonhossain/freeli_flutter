@@ -76,10 +76,30 @@ class ChatsTab extends StatelessWidget {
   const ChatsTab({super.key});
 
   final List<Map<String, String>> users = const [
-    {"name": "John Doe", "msg": "Hey, how are you?"},
-    {"name": "Sarah Khan", "msg": "Let’s meet tomorrow"},
-    {"name": "Alex Smith", "msg": "Project update?"},
-    {"name": "Emma Watson", "msg": "Call me please"},
+    {
+      "name": "John Doe",
+      "msg": "Hey, how are you?",
+      "time": "20/10/2023",
+      "count": "2",
+    },
+    {
+      "name": "Sarah Khan",
+      "msg": "Let’s meet tomorrow",
+      "time": "19/10/2023",
+      "count": "5",
+    },
+    {
+      "name": "Alex Smith",
+      "msg": "Project update?",
+      "time": "18/10/2023",
+      "count": "0",
+    },
+    {
+      "name": "Emma Watson",
+      "msg": "Call me please",
+      "time": "17/10/2023",
+      "count": "1",
+    },
   ];
 
   @override
@@ -116,9 +136,32 @@ class ChatsTab extends StatelessWidget {
                 color: Colors.white70,
               ), // Lighter text for visibility
             ),
-            trailing: const Icon(
-              Icons.chat_bubble_outline,
-              color: Colors.white54, // Lighter icon for visibility
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  users[index]["time"]!,
+                  style: const TextStyle(color: Colors.white54, fontSize: 11),
+                ),
+                const SizedBox(height: 5),
+                if (users[index]["count"] != "0")
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: Colors.greenAccent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      users[index]["count"]!,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         );
