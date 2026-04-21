@@ -37,7 +37,10 @@ class _MyAppState extends State<MyApp> {
             OtpScreen(isDark: isDark, onThemeChange: toggleTheme),
         "/company": (context) =>
             CompanyListScreen(isDark: isDark, onThemeChange: toggleTheme),
-        "/home": (context) => HomePage(),
+        "/home": (context) =>
+            HomePage(isDark: isDark, onThemeChange: toggleTheme),
+        "/solve": (context) =>
+            SolveScreen(isDark: isDark, onThemeChange: toggleTheme),
       },
     );
   }
