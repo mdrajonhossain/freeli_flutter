@@ -108,16 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 10),
 
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, "/solve");
-                },
-                child: const Text(
-                  "Need help? Solve here",
-                  style: TextStyle(color: Colors.lightBlueAccent, fontSize: 13),
-                ),
-              ),
-
               Row(
                 children: [
                   Checkbox(
