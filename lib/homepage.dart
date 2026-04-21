@@ -115,12 +115,60 @@ class ChatsTab extends StatelessWidget {
       "time": "17/10/2023",
       "count": "1",
     },
+    {
+      "name": "Sarah Khan",
+      "msg": "Let’s meet tomorrow",
+      "time": "19/10/2023",
+      "count": "5",
+    },
+    {
+      "name": "Alex Smith",
+      "msg": "Project update?",
+      "time": "18/10/2023",
+      "count": "0",
+    },
+    {
+      "name": "Sarah Khan",
+      "msg": "Let’s meet tomorrow",
+      "time": "19/10/2023",
+      "count": "5",
+    },
+    {
+      "name": "Alex Smith",
+      "msg": "Project update?",
+      "time": "18/10/2023",
+      "count": "0",
+    },
+    {
+      "name": "Sarah Khan",
+      "msg": "Let’s meet tomorrow",
+      "time": "19/10/2023",
+      "count": "5",
+    },
+    {
+      "name": "Alex Smith",
+      "msg": "Project update?",
+      "time": "18/10/2023",
+      "count": "0",
+    },
+    {
+      "name": "Sarah Khan",
+      "msg": "Let’s meet tomorrow",
+      "time": "19/10/2023",
+      "count": "5",
+    },
+    {
+      "name": "Alex Smith",
+      "msg": "Project update?",
+      "time": "18/10/2023",
+      "count": "2",
+    },
   ];
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(top: 16, bottom: 40, left: 16, right: 16),
       itemCount: users.length,
       itemBuilder: (context, index) {
         return Card(
