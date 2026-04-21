@@ -29,18 +29,26 @@ class HomePage extends StatelessWidget {
             94,
           ), // Darker background for app bar
           elevation: 0,
-          centerTitle: true,
+          centerTitle: false,
+          automaticallyImplyLeading: false,
+          titleSpacing: 10,
+          title: Image.asset('assets/logo.webp', height: 45),
 
           actions: [
             IconButton(
-              onPressed: () => onThemeChange(false),
-              icon: const Icon(Icons.wb_sunny),
-              color: Colors.yellow,
+              onPressed: () {},
+              icon: const Icon(Icons.search, color: Colors.white),
+              tooltip: 'Search',
             ),
             IconButton(
-              onPressed: () => onThemeChange(true),
-              icon: const Icon(Icons.nightlight_round),
-              color: Colors.white,
+              onPressed: () {},
+              icon: const Icon(Icons.filter_alt_sharp, color: Colors.white),
+              tooltip: 'Filter',
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.menu, color: Colors.white),
+              tooltip: 'Toggle menu',
             ),
           ],
 
