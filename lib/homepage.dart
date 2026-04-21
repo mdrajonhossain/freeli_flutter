@@ -31,25 +31,32 @@ class HomePage extends StatelessWidget {
           elevation: 0,
           centerTitle: false,
           automaticallyImplyLeading: false,
-          titleSpacing: 10,
+          titleSpacing: 5,
           title: Image.asset('assets/logo.webp', height: 45),
 
           actions: [
             IconButton(
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               onPressed: () {},
               icon: const Icon(Icons.search, color: Colors.white),
               tooltip: 'Search',
             ),
             IconButton(
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               onPressed: () {},
               icon: const Icon(Icons.filter_alt_sharp, color: Colors.white),
               tooltip: 'Filter',
             ),
             IconButton(
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               onPressed: () {},
               icon: const Icon(Icons.menu, color: Colors.white),
               tooltip: 'Toggle menu',
             ),
+            const SizedBox(width: 3),
           ],
 
           /// ================= TAB BAR =================
