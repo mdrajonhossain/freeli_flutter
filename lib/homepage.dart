@@ -20,28 +20,40 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: bgColor,
 
-        /// ================= APP BAR + TOP NAV =================
+        /// ================= APP BAR =================
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: const Color.fromARGB(
+            255,
+            12,
+            31,
+            94,
+          ), // Darker background for app bar
           elevation: 0,
           centerTitle: true,
+
           actions: [
             IconButton(
               onPressed: () => onThemeChange(false),
-              icon: const Icon(Icons.wb_sunny, size: 22),
+              icon: const Icon(Icons.wb_sunny),
               color: Colors.yellow,
             ),
             IconButton(
               onPressed: () => onThemeChange(true),
-              icon: const Icon(Icons.nightlight_round, size: 22),
+              icon: const Icon(Icons.nightlight_round),
               color: Colors.white,
             ),
           ],
 
+          /// ================= TAB BAR =================
           bottom: const TabBar(
-            indicatorColor: Colors.lightBlueAccent,
-            labelColor: Colors.lightBlueAccent,
-            unselectedLabelColor: Colors.white54,
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            dividerColor: Colors.transparent,
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(color: Colors.white, width: 2),
+            ),
+
             tabs: [
               Tab(icon: Icon(Icons.chat), text: "Chats"),
               Tab(icon: Icon(Icons.call), text: "Calls"),
@@ -50,7 +62,7 @@ class HomePage extends StatelessWidget {
           ),
         ),
 
-        /// ================= TAB CONTENT =================
+        /// ================= BODY =================
         body: const TabBarView(
           children: [ChatsTab(), CallsTab(), DashboardTab()],
         ),
@@ -59,7 +71,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// ================= CHATS TAB =================
+/// ================= CHATS TAB (WHITE CARD UI) =================
 class ChatsTab extends StatelessWidget {
   const ChatsTab({super.key});
 
@@ -68,42 +80,45 @@ class ChatsTab extends StatelessWidget {
     {"name": "Sarah Khan", "msg": "Let’s meet tomorrow"},
     {"name": "Alex Smith", "msg": "Project update?"},
     {"name": "Emma Watson", "msg": "Call me please"},
-    {"name": "Alex Smith", "msg": "Project update?"},
-    {"name": "Alex Smith", "msg": "Project update?"},
-    {"name": "Alex Smith", "msg": "Project update?"},
-    {"name": "Alex Smith", "msg": "Project update?"},
-    {"name": "Alex Smith", "msg": "Project update?"},
-    {"name": "Alex Smith", "msg": "Project update?"},
-    {"name": "Alex Smith", "msg": "Project update?"},
   ];
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 50),
+      padding: const EdgeInsets.all(16),
       itemCount: users.length,
       itemBuilder: (context, index) {
         return Card(
-          color: Colors.white.withOpacity(0.08),
+          color: Colors.green.withOpacity(
+            0.1,
+          ), // Green background for list items
+          elevation: 2,
+          margin: const EdgeInsets.only(bottom: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
             leading: const CircleAvatar(
-              backgroundColor: Colors.blueAccent,
+              backgroundColor:
+                  AppColors.accentColor, // Use accent color for avatar
               child: Icon(Icons.person, color: Colors.white),
             ),
             title: Text(
               users[index]["name"]!,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(
+                color: Colors.white, // White text for visibility
+                fontWeight: FontWeight.w600,
+              ),
             ),
             subtitle: Text(
               users[index]["msg"]!,
-              style: const TextStyle(color: Colors.white70),
+              style: const TextStyle(
+                color: Colors.white70,
+              ), // Lighter text for visibility
             ),
             trailing: const Icon(
               Icons.chat_bubble_outline,
-              color: Colors.white54,
+              color: Colors.white54, // Lighter icon for visibility
             ),
           ),
         );
@@ -129,21 +144,34 @@ class CallsTab extends StatelessWidget {
       itemCount: calls.length,
       itemBuilder: (context, index) {
         return Card(
-          color: Colors.white.withOpacity(0.08),
+          color: Colors.green.withOpacity(
+            0.1,
+          ), // Green background for list items
+          margin: const EdgeInsets.only(bottom: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
-            leading: const Icon(Icons.call, color: Colors.greenAccent),
+            leading: const Icon(
+              Icons.call,
+              color: Colors.greenAccent,
+            ), // Green accent for call icon
             title: Text(
               calls[index]["name"]!,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(
+                color: Colors.white,
+              ), // White text for visibility
             ),
             subtitle: Text(
               calls[index]["time"]!,
-              style: const TextStyle(color: Colors.white70),
+              style: const TextStyle(
+                color: Colors.white70,
+              ), // Lighter text for visibility
             ),
-            trailing: const Icon(Icons.phone, color: Colors.white54),
+            trailing: const Icon(
+              Icons.phone,
+              color: Colors.white54,
+            ), // Lighter icon for visibility
           ),
         );
       },
@@ -158,14 +186,12 @@ class DashboardTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.all(24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             "Dashboard",
-            textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
               fontSize: 26,
@@ -176,15 +202,16 @@ class DashboardTab extends StatelessWidget {
           SizedBox(height: 15),
 
           Text(
-            "Welcome to your dashboard. Here you can manage chats, calls and view system analytics.",
-            style: TextStyle(color: Colors.white70, fontSize: 14),
+            "Manage your chats, calls, and analytics from here.",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70),
           ),
 
           SizedBox(height: 20),
 
           Text(
             "• Total Users: 120\n• Active Chats: 45\n• Calls Today: 18",
-            style: TextStyle(color: Colors.white70, fontSize: 15),
+            style: TextStyle(color: Colors.white70),
           ),
         ],
       ),
