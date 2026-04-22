@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'AppColors.dart';
+import 'controller/model/modelScreema_mutation.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool isDark;
@@ -21,6 +24,66 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  Future<void> _performLogin() async {
+    setState(() => isLoading = true);
+
+    const String apiUrl = "https://caapicdn02.freeli.io/workfreeli";
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "query": loginMutation,
+          "variables": {
+            "email": emailController.text,
+            "password": passwordController.text,
+            "companyId": null,
+          },
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final loginData = responseData['data']['login'];
+
+        // Print the status and full response as requested
+        print("Status: ${loginData['status']}");
+        print("Full API Response: $loginData");
+
+        if (loginData['status'] == true) {
+          if (mounted) {
+            Navigator.pushNamed(
+              context,
+              "/company",
+              arguments: {
+                "companies": loginData['companies'],
+                "email": emailController.text,
+                "password": passwordController.text,
+              },
+            );
+          }
+        } else {
+          _showError(loginData['message'] ?? "Login failed");
+        }
+      } else {
+        _showError("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      _showError("Connection error: $e");
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   void dispose() {
@@ -86,7 +149,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, "/otp");
+                      Navigator.pushNamed(
+                        context,
+                        "/otp",
+                        arguments: {
+                          "email": emailController.text,
+                          "password": passwordController.text,
+                        },
+                      );
                     },
                     child: const Text(
                       "Sign in with OTP?",
@@ -96,7 +166,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, "/otp");
+                      Navigator.pushNamed(
+                        context,
+                        "/otp",
+                        arguments: {
+                          "email": emailController.text,
+                          "password": passwordController.text,
+                        },
+                      );
                     },
                     child: const Text(
                       "Forgot your password?",
@@ -138,27 +215,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () {
-                        debugPrint("Email: ${emailController.text}");
-                        debugPrint("Password: ${passwordController.text}");
-
-                        Navigator.pushNamed(
-                          context,
-                          "/company",
-                          arguments: {
-                            "email": emailController.text,
-                            "password": passwordController.text,
-                          },
-                        );
-                      },
-                      child: const Center(
-                        child: Text(
-                          "Sign In",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                      onTap: isLoading ? null : _performLogin,
+                      child: Center(
+                        child: isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Text(
+                                "Sign In",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
                     ),
                   ),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'AppColors.dart';
+import 'controller/model/modelScreema_mutation.dart';
 
-class CompanyListScreen extends StatelessWidget {
+class CompanyListScreen extends StatefulWidget {
   final bool isDark;
   final Function(bool) onThemeChange;
 
@@ -11,24 +14,83 @@ class CompanyListScreen extends StatelessWidget {
     required this.onThemeChange,
   });
 
-  final List<String> companies = const [
-    "Google",
-    "Amazon",
-    "Microsoft",
-    "Amazon",
-    "Apple",
-    "Netflix",
-    "Tesla",
-    "Meta",
-    "Uber",
-    "Spotify",
-    "Adobe",
-    "IBM",
-  ];
+  @override
+  State<CompanyListScreen> createState() => _CompanyListScreenState();
+}
+
+class _CompanyListScreenState extends State<CompanyListScreen> {
+  bool isLoading = false;
+
+  Future<void> _selectCompany(
+    String companyId,
+    String email,
+    String password,
+  ) async {
+    setState(() => isLoading = true);
+
+    const String apiUrl = "https://caapicdn02.freeli.io/workfreeli";
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "query": loginMutation,
+          "variables": {
+            "email": email,
+            "password": password,
+            "companyId": companyId,
+          },
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final loginData = responseData['data']['login'];
+
+        print("Company Select Response: $loginData");
+
+        if (loginData['status'] == true) {
+          if (mounted) {
+            Navigator.pushNamed(
+              context,
+              "/otp",
+              arguments: {
+                "email": email,
+                "password": password,
+                "companyId": companyId,
+              },
+            );
+          }
+        } else {
+          _showError(loginData['message'] ?? "Selection failed");
+        }
+      } else {
+        _showError("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      _showError("Connection error: $e");
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = AppColors.getBackgroundColor(isDark);
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+        {};
+    final List<dynamic> companiesData = args['companies'] ?? [];
+    final String email = args['email'] ?? '';
+    final String password = args['password'] ?? '';
+
+    final bgColor = AppColors.getBackgroundColor(widget.isDark);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -66,8 +128,13 @@ class CompanyListScreen extends StatelessWidget {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: companies.length,
+                itemCount: companiesData.length,
                 itemBuilder: (context, index) {
+                  final company = companiesData[index];
+                  final String companyName =
+                      company['company_name'] ?? 'Unknown Company';
+                  final String companyId = company['company_id'] ?? '';
+
                   return Card(
                     margin: const EdgeInsets.only(bottom: 10),
                     color: Colors.white.withOpacity(0.08),
@@ -81,7 +148,7 @@ class CompanyListScreen extends StatelessWidget {
                         vertical: 6,
                       ),
                       title: Text(
-                        companies[index],
+                        companyName,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -94,19 +161,17 @@ class CompanyListScreen extends StatelessWidget {
                         size: 14,
                       ),
 
-                      /// ✅ FIXED ON TAP
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Selected ${companies[index]}"),
-                            duration: const Duration(milliseconds: 800),
-                          ),
-                        );
-
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          Navigator.pushNamed(context, "/otp");
-                        });
-                      },
+                      onTap: isLoading
+                          ? null
+                          : () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Selecting $companyName..."),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                              _selectCompany(companyId, email, password);
+                            },
                     ),
                   );
                 },
@@ -120,13 +185,13 @@ class CompanyListScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () => onThemeChange(false),
+                    onPressed: () => widget.onThemeChange(false),
                     icon: const Icon(Icons.wb_sunny, size: 28),
                     color: Colors.yellow,
                   ),
                   const SizedBox(width: 20),
                   IconButton(
-                    onPressed: () => onThemeChange(true),
+                    onPressed: () => widget.onThemeChange(true),
                     icon: const Icon(Icons.nightlight_round, size: 28),
                     color: Colors.white,
                   ),

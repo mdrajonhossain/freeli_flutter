@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'AppColors.dart';
+import 'controller/model/modelScreema_mutation.dart';
 
 class OtpScreen extends StatefulWidget {
   final bool isDark;
@@ -23,16 +27,72 @@ class _OtpScreenState extends State<OtpScreen> {
 
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
 
+  bool isLoading = false;
+
   String getOtp() => controllers.map((e) => e.text).join();
 
-  void verifyOtp() {
-    if (getOtp().length == 6) {
-      Navigator.pushReplacementNamed(context, "/home");
-    } else {
+  Future<void> _saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+  }
+
+  Future<void> verifyOtp(
+    String email,
+    String password,
+    String? companyId,
+  ) async {
+    final otpCode = getOtp();
+    if (otpCode.length != 6) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Enter full 6 digit OTP")));
+      return;
     }
+
+    setState(() => isLoading = true);
+    const String apiUrl = "https://caapicdn02.freeli.io/workfreeli";
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "query": loginMutation,
+          "variables": {
+            "email": email,
+            "password": password,
+            "companyId": companyId,
+            "code": otpCode,
+          },
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final loginData = responseData['data']['login'];
+
+        if (loginData['status'] == true) {
+          await _saveToken(loginData['token']);
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, "/home");
+          }
+        } else {
+          _showError(loginData['message'] ?? "OTP verification failed");
+        }
+      } else {
+        _showError("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      _showError("Connection error: $e");
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void resendOtp() {}
@@ -74,7 +134,25 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   @override
+  void dispose() {
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+    for (var node in focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+        {};
+    final String email = args['email'] ?? '';
+    final String password = args['password'] ?? '';
+    final String? companyId = args['companyId'];
+
     final bgColor = AppColors.getBackgroundColor(widget.isDark);
 
     // 📱 responsive box size fix (IMPORTANT)
@@ -159,16 +237,22 @@ class _OtpScreenState extends State<OtpScreen> {
                             color: Colors.transparent,
                             child: InkWell(
                               borderRadius: BorderRadius.circular(15),
-                              onTap: verifyOtp,
-                              child: const Center(
-                                child: Text(
-                                  "Verify & Continue",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                              onTap: isLoading
+                                  ? null
+                                  : () => verifyOtp(email, password, companyId),
+                              child: Center(
+                                child: isLoading
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : const Text(
+                                        "Verify & Continue",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
