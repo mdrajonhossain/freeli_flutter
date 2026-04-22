@@ -3,6 +3,7 @@ import 'AppColors.dart';
 import 'connect/ChatsTab.dart';
 import 'connect/CallsTab.dart';
 import 'connect/DashboardTab.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
   final bool isDark;
@@ -99,7 +100,9 @@ class HomePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.remove('token');
                       Navigator.pushNamed(context, "/login");
                     },
                     icon: const Icon(Icons.logout, color: Colors.white),
